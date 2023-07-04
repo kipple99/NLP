@@ -23,3 +23,13 @@ def clean_by_len(tokenized_words, cut_off_length):
             cleaned_by_freq_len.append(word)
 
     return cleaned_by_freq_len
+
+# 불용어 제거 함수
+def clean_by_stopwords(tokenized_words, stop_words_set):
+    cleaned_words = []
+    
+    for word in tokenized_words:
+        if word not in stop_words_set:
+            cleaned_words.append(word)
+            
+    return cleaned_words
