@@ -1,10 +1,15 @@
 import nltk
+import pandas as pd
 from nltk.tokenize import word_tokenize
 from collections import Counter
-# from text import TEXT
+from text import TEXT
 from nltk.corpus import stopwords
-nltk.download('stopwords')
 from nltk.stem import PorterStemmer
+from nltk.tokenize import sent_tokenize
+from nltk.tag import pos_tag
+nltk.download('stopwords')
+nltk.download('averaged_perceptron_tagger')
+nltk.download('punkt')
 
 # 등장 빈도 기준 정제 함수
 def clean_by_freq(tokenized_words, cut_off_count):
@@ -50,3 +55,4 @@ def stemming_by_porter(tokenized_words):
         porter_stemmed_words.append(stem)
 
     return porter_stemmed_words
+
