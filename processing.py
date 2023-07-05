@@ -7,9 +7,14 @@ from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 from nltk.tokenize import sent_tokenize
 from nltk.tag import pos_tag
+from nltk.stem import WordNetLemmatizer
+from nltk.corpus import wordnet as wn
+nltk.download('wordnet')
+nltk.download('omw-1.4')
 nltk.download('stopwords')
 nltk.download('averaged_perceptron_tagger')
 nltk.download('punkt')
+
 
 # 등장 빈도 기준 정제 함수
 def clean_by_freq(tokenized_words, cut_off_count):
@@ -69,3 +74,29 @@ def pos_tagger(tokenized_sents):
         pos_tagged_words.extend(pos_tagged)
     
     return pos_tagged_words
+
+# Penn Treebank POS Tag를 WordNet POS Tag의 4가지 태그로 손쉽게 바꾸기
+def penn_to_wn(tag):
+    if tag.startswith('J'):
+        return wn.ADJ
+    elif tag.startswith('N'):
+        return wn.NOUN
+    elif tag.startswith('R'):
+        return wn.ADV
+    elif tag.startswith('V'):
+        return wn.VERB
+
+# 표제어 추출
+def words_lemmatizer(pos_tagged_words):
+    lemmatizer = WordNetLemmatizer()
+    lemmatized_words = []
+
+    for word, tag in pos_tagged_words:
+        wn_tag = penn_to_wn(tag)
+
+        if wn_tag in (wn.NOUN, wn.ADJ, wn.ADV, wn.VERB):
+            lemmatized_words.append(lemmatizer.lemmatize(word, wn_tag))
+        else:
+            lemmatized_words.append(word)
+
+    return lemmatized_words
