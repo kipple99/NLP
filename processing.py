@@ -56,3 +56,16 @@ def stemming_by_porter(tokenized_words):
 
     return porter_stemmed_words
 
+# 품사 태깅 함수
+def pos_tagger(tokenized_sents):
+    pos_tagged_words = []
+
+    for sentence in tokenized_sents:
+        # 단어 토큰화
+        tokenized_words = word_tokenize(sentence)
+    
+        # 품사 태깅
+        pos_tagged = pos_tag(tokenized_words)
+        pos_tagged_words.extend(pos_tagged)
+    
+    return pos_tagged_words
