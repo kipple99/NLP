@@ -1,4 +1,10 @@
+import nltk
+from nltk.tokenize import word_tokenize
 from collections import Counter
+# from text import TEXT
+from nltk.corpus import stopwords
+nltk.download('stopwords')
+from nltk.stem import PorterStemmer
 
 # 등장 빈도 기준 정제 함수
 def clean_by_freq(tokenized_words, cut_off_count):
@@ -33,3 +39,14 @@ def clean_by_stopwords(tokenized_words, stop_words_set):
             cleaned_words.append(word)
             
     return cleaned_words
+
+# 포터 스테머 어간 추출 함수
+def stemming_by_porter(tokenized_words):
+    porter_stemmer = PorterStemmer()
+    porter_stemmed_words = []
+
+    for word in tokenized_words:
+        stem = porter_stemmer.stem(word)
+        porter_stemmed_words.append(stem)
+
+    return porter_stemmed_words
