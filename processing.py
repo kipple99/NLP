@@ -9,11 +9,15 @@ from nltk.tokenize import sent_tokenize
 from nltk.tag import pos_tag
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import wordnet as wn
-nltk.download('wordnet')
+from nltk.corpus import sentiwordnet as swn
+
 nltk.download('omw-1.4')
+nltk.download('wordnet')
+nltk.download('sentiwordnet')
 nltk.download('stopwords')
 nltk.download('averaged_perceptron_tagger')
 nltk.download('punkt')
+stopwords_set = set(stopwords.words('english'))
 
 
 # 등장 빈도 기준 정제 함수
@@ -41,11 +45,11 @@ def clean_by_len(tokenized_words, cut_off_length):
     return cleaned_by_freq_len
 
 # 불용어 제거 함수
-def clean_by_stopwords(tokenized_words, stop_words_set):
+def clean_by_stopwords(tokenized_words, stopwords_set):
     cleaned_words = []
     
     for word in tokenized_words:
-        if word not in stop_words_set:
+        if word not in stopwords_set:
             cleaned_words.append(word)
             
     return cleaned_words
@@ -100,3 +104,28 @@ def words_lemmatizer(pos_tagged_words):
             lemmatized_words.append(word)
 
     return lemmatized_words
+
+def swn_polarity(pos_tagged_words):
+    senti_score = 0
+
+    for word, tag in pos_tagged_words:
+        # PennTreeBank 기준 품사를 WordNet 기준 품사로 변경
+        wn_tag = penn_to_wn(tag)
+        if wn_tag not in (wn.NOUN, wn.ADJ, wn.ADV, wn.VERB):
+            continue
+    
+        # Synset 확인, 어휘 사전에 없을 경우에는 스킵
+        if not wn.synsets(word, wn_tag):
+            continue
+        else:
+            synsets = wn.synsets(word, wn_tag)
+    
+        # SentiSynset 확인
+        synset = synsets[0]
+        swn_synset = swn.senti_synset(synset.name())
+
+        # 감성 지수 계산
+        word_senti_score = (swn_synset.pos_score() - swn_synset.neg_score())
+        senti_score += word_senti_score
+
+    return senti_score
